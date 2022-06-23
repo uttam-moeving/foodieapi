@@ -1,4 +1,4 @@
-from dbcreds import *
+from db_creds import *
 import mariadb
 
 
