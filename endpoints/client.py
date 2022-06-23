@@ -1,3 +1,4 @@
+from app import app
 from flask import Flask, jsonify, request
 import json
 from db_helpers import run_query
@@ -5,7 +6,7 @@ from flask_cors import CORS
 import os
 import bcrypt
 import uuid
-from app import app
+
 
 
 
