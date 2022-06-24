@@ -14,7 +14,7 @@ from endpoints import client
 @app.post('/api/login')
 def client_login():
     request_payload = request.get_json()
-    query = 'SELECT * FROM client WHERE username=?'
+    query = 'SELECT * FROM client WHERE email=?'
 
     email = request_payload.get('email')
     password = request_payload.get('password')
@@ -25,11 +25,11 @@ def client_login():
     
     if bcrypt.checkpw(password.encode(), result[0][3].encode()):
 
-        token=uuid.uuid4()
+        token=str(uuid.uuid4())
         run_query( 'INSERT INTO client_session (token, client_Id) VALUES (?,?)', [token, result[0][0]])
-        client_id = result[0][0]
         
-        return jsonify({client_id:result[0][0],token:token}), 200
+        
+        return jsonify({'clientId':result[0][0],'token':token}), 200
     else:
         return jsonify(result, 401)
 
@@ -49,12 +49,10 @@ def restaurant_login():
     
     if bcrypt.checkpw(password.encode(), result[0][3].encode()):
 
-        token=uuid.uuid4()
+        token=str(uuid.uuid4())
         run_query( 'INSERT INTO restaurant_session (token, restuarant_Id) VALUES (?,?)', [token, result[0][0]])
         restuarant_Id= result[0][0]
         
         return jsonify({restuarant_Id:result[0][0],token:token}), 200
     else:
         return jsonify(result, 401)
-      
-app.run()

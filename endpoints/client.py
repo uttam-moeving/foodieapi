@@ -1,11 +1,15 @@
 from app import app
 from flask import Flask, jsonify, request
 import json
+import jwt
+import datetime
 from db_helpers import run_query
 from flask_cors import CORS
 import os
 import bcrypt
 import uuid
+
+from endpoints.login import client_login
 
 
 
@@ -34,18 +38,26 @@ def create_client():
 
     return jsonify('client created', 200)
 
-@app.delete('/api/client/<id>')
+@app.delete('/api/client')
 def delete_client():
-    client_id = request.view_args['id']
-    query = 'DELETE FROM client WHERE Id = ?'
-    result = run_query(query, (client_id))
+    client_session_token = request.view_args['token']
+    query = 'DELETE FROM client WHERE token = ?'
+    result = run_query(query, (client_session_token))
     
     return jsonify('client deleted', 200)
 
-@app.patch('/api/client/<id>')
+@app.patch('/api/client')
 def update_client():
-    client_id = request.view_args['id']
+    token = 
+    def client_login()
+"""     if client_session_token=true
+    client_id = request.get_json()
+    
+    salt = bcrypt.gensalt()
+    password = bcrypt.hashpw(request_payload.get('password').encode(), salt)
+    first_name = request_payload.get('first_name')
+    last_name = request_payload.get('last_name')
     query = 'UPDATE client WHERE Id = ?'
     result = run_query(query, (client_id))
     
-    return jsonify('client updated', 200)
+    return jsonify('client updated', 200) """

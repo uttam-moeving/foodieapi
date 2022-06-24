@@ -51,7 +51,7 @@ def create_restaurant():
 
 
 
-@app.update('/api/restaurant/<id>')
+@app.patch('/api/restaurant')
 def update_restaurant():
     restaurant_id = request.view_args['id']
     query = 'UPDATE restaurant WHERE Id = ?'

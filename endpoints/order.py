@@ -8,8 +8,8 @@ import bcrypt
 import uuid
 
 
-@app.get('/api/client')
-def get_clients():
+@app.get('/api/orders')
+def get_order():
     query = 'SELECT * FROM orders'
     result = run_query(query)
 
