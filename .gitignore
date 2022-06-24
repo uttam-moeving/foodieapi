@@ -2,3 +2,4 @@ venv/
 .vscode/
 db_creds.py
 __pycache__
+.idea
