@@ -1,5 +1,5 @@
 host = 'localhost'
 port = 3306
-database = 'test'
-user = 'mysql'
-password = ''
+database = 'app'
+user = 'root'
+password = 'secret'

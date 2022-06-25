@@ -2,19 +2,22 @@ from db_creds import *
 import mariadb
 
 
+
 def connect_db():
     conn = None
     cursor = None
 
     try:
-        conn = mariadb.connect(host=host, port=port,database=database, user=user, password=password)
-        cursor = conn.cursor()
-        return (conn, cursor)
-    except mariadb.OperationalError as e:
-        print("got an operational error")
-    if ("Access denied" in e.msg):
-        print("failed to log in")
-    disconnect_db()
+        conn = mariadb.connect(
+            host=host, port=port, database=database, user=user, password=password
+        )
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        disconnect_db()
+
+    cursor = conn.cursor()
+    return (conn, cursor)
+
 
 
 def disconnect_db(conn, cursor):

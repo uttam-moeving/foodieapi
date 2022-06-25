@@ -7,6 +7,9 @@ from flask_cors import CORS
 import os
 import bcrypt
 import uuid
+from auth.utils import (
+    current_user
+)
 
 from endpoints.login import client_login
 
@@ -20,7 +23,7 @@ def get_clients():
 
     return jsonify(result)
 
-@app.post('/api/client')
+@app.post('/api/createclient')
 def create_client():
     request_payload = request.get_json()
     query = 'INSERT INTO client (email, username, password, first_name, last_name, picture_url) VALUES (?,?,?,?,?,?)'
@@ -37,17 +40,16 @@ def create_client():
 
     return jsonify('client created', 200)
 
-app.patch('/api/client')
+@app.patch('/api/client')
 def update_client():
     data=request.json
-    token = data.get('token')
-    
+
     first_name = data.get('first_name')
     last_name = data.get('last_name')
-    picture_url = data.get('picture_Url') 
-    
-    query = 'UPDATE client WHERE Id = ?'
-    result = run_query(query, (client_id))
+    picture_url = data.get('picture_Url')
+
+    query = f"""UPDATE client SET first_name='{first_name}', last_name='{last_name}', picture_url='{picture_url}' WHERE id={current_user()}"""
+    result = run_query(query)
     
     
     return jsonify('client updated', 200) 
