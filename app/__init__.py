@@ -25,7 +25,7 @@ class SecureRoutersMiddleware(BaseHTTPMiddleware):
         else:
             return call_next(request)
 
-secured_routers = ["/api/client"]
+secured_routers = ["/api/client",]
 
 # configuration
 

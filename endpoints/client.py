@@ -8,7 +8,8 @@ import os
 import bcrypt
 import uuid
 from auth.utils import (
-    current_user
+    current_user,
+    generate_password
 )
 
 from endpoints.login import client_login
@@ -30,8 +31,7 @@ def create_client():
 
     email = request_payload.get('email')
     username = request_payload.get('username')
-    salt = bcrypt.gensalt()
-    password = bcrypt.hashpw(request_payload.get('password').encode(), salt)
+    password = generate_password(request_payload.get('password'))
     first_name = request_payload.get('first_name')
     last_name = request_payload.get('last_name')
     picture_url = request_payload.get('picture_Url') or 'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg'

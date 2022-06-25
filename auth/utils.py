@@ -2,6 +2,7 @@ from contextvars import ContextVar
 from datetime import datetime, timedelta
 from auth.crud import Crud
 import uuid
+import bcrypt
 user_session: ContextVar[None] = ContextVar('user_session', default=None)
 
 def current_user():
@@ -21,3 +22,8 @@ def validate_token(token):
 
 def create_access_token():
     return str(uuid.uuid4())
+
+def generate_password(password):
+    salt = bcrypt.gensalt()
+    hashcoded = bcrypt.hashpw(password.encode(), salt)
+    return hashcoded

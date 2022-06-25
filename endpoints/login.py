@@ -26,8 +26,6 @@ def client_login():
     
     result =run_query(query, [email])
 
-
-    
     if bcrypt.checkpw(password.encode(), result[0][3].encode()):
         # check for existing token
         tokencheck = f'SELECT * FROM client_session WHERE client_Id={result[0][0]}'
@@ -43,8 +41,6 @@ def client_login():
     else:
         return jsonify(result, 401)
 
-
-
 @app.post('/api/restaurant_login')
 def restaurant_login():
     request_payload = request.get_json()
@@ -52,17 +48,21 @@ def restaurant_login():
 
     email = request_payload.get('email')
     password = request_payload.get('password')
-
     
-    result =run_query(query, [email])
-
+    result = run_query(query, [email])
+    restuarant_Id= result[0][0]
     
-    if bcrypt.checkpw(password.encode(), result[0][3].encode()):
+    if bcrypt.checkpw(password.encode(), result[0][8].encode()):
+        # check for existing token
+        tokencheck = f'SELECT * FROM restaurant_session WHERE id={restuarant_Id}'
+        oldtoken = run_query(tokencheck)
+        newtoken=create_access_token()
+        if(len(oldtoken)>0): # if old token exist
+            updatequery = f"UPDATE restaurant_session SET token = '{newtoken}' WHERE id = {restuarant_Id}"
+            run_query(updatequery)
+        else:
+            run_query(f"INSERT INTO restaurant_session (token, id) VALUES ('{newtoken}',{restuarant_Id})")
 
-        token=str(uuid.uuid4())
-        run_query( 'INSERT INTO restaurant_session (token, restuarant_Id) VALUES (?,?)', [token, result[0][0]])
-        restuarant_Id= result[0][0]
-        
-        return jsonify({restuarant_Id:result[0][0],token:token}), 200
+        return jsonify({"restuarant_Id":restuarant_Id,"token":newtoken}), 200
     else:
         return jsonify(result, 401)

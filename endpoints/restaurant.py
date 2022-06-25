@@ -5,7 +5,11 @@ from db_helpers import run_query
 from flask_cors import CORS
 import os
 import bcrypt
-import uuid 
+import uuid
+from auth.utils import (
+    current_user,
+    generate_password
+) 
 
 
 
@@ -15,17 +19,18 @@ def get_restaurants():
     result = run_query(query)
 
     formated_result = list(map(lambda x: {
-        'address': x['address'],
-        'bannerUrl': x['banner_url'],
-        'bio': x['bio'],
-        'city': x['city_name'],
-        'email': x['email'],
-        'name': x['restaurant_name'],
-        'phoneNum': x['phone_number'],
-        'profileUrl': x['profile_url'],
-        'restaurantId': x['id']
+        'address': x[3],
+        'bannerUrl': x[6],
+        'bio': x[5],
+        'city': x[11],
+        'email': x[1],
+        'name': x[2],
+        'phoneNum': x[4],
+        'profileUrl': x[7],
+        'restaurantId': x[9]
 
     }, result))
+    
     return jsonify(formated_result)
 
 
@@ -42,8 +47,7 @@ def create_restaurant():
     city = request_payload.get('city')
     email = request_payload.get('email')
     phone_number = request_payload.get('phoneNum')
-    password = request_payload.get('password')
-
+    password = generate_password(request_payload.get('password'))
 
     result = run_query(query, (email, name, address, phone_number, bio, password, city, banner_url, profile_url))
 
@@ -53,8 +57,18 @@ def create_restaurant():
 
 @app.patch('/api/restaurant')
 def update_restaurant():
-    restaurant_id = request.view_args['id']
-    query = 'UPDATE restaurant WHERE Id = ?'
-    result = run_query(query, (restaurant_id))
+    
+    data=request.json
+    name = data.get('name')
+    address = data.get('address')
+    phone_number = data.get('phone_number')
+    bio = data.get('bio')
+    profile_url = data.get('profile_url')
+    banner_url = data.get('banner_url')
+    city = data.get('city')
+
+    query = f"""UPDATE restaurant SET name='{name}', address='{address}', phone_number='{phone_number}' , bio='{bio}', profile_url='{profile_url}', banner_url='{banner_url}',city='{city}' WHERE id={current_user()}"""
+    result = run_query(query)
+
     
     return jsonify('restaurant updated', 200)
