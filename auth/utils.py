@@ -20,6 +20,18 @@ def validate_token(token):
         return False
 
 
+def validate_restaurant_token(token):
+    try:
+        crud = Crud()
+        client_id = crud.get_restaurant_by_token(token=token)
+        if (len(client_id) == 0):
+            return False
+        user_session.set(client_id[0][0])
+        return  True
+    except Exception as e:
+        return False
+
+
 def create_access_token():
     return str(uuid.uuid4())
 

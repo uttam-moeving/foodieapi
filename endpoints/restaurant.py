@@ -61,7 +61,7 @@ def update_restaurant():
     data=request.json
     name = data.get('name')
     address = data.get('address')
-    phone_number = data.get('phone_number')
+    phone_number = data.get('phoneNum')
     bio = data.get('bio')
     profile_url = data.get('profile_url')
     banner_url = data.get('banner_url')

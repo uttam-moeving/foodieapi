@@ -7,7 +7,7 @@ import bcrypt
 import uuid
 from flask_http_middleware import MiddlewareManager, BaseHTTPMiddleware
 from flask import abort
-from auth.utils import validate_token
+from auth.utils import validate_token,validate_restaurant_token
 
 class SecureRoutersMiddleware(BaseHTTPMiddleware):
     def __init__(self, secured_routers = []):
@@ -25,7 +25,25 @@ class SecureRoutersMiddleware(BaseHTTPMiddleware):
         else:
             return call_next(request)
 
+class RestaurantSecureRoutersMiddleware(BaseHTTPMiddleware):
+    def __init__(self, secured_routers = []):
+        super().__init__()
+        self.secured_routers = secured_routers
+
+    def dispatch(self, request, call_next):
+        if request.path in self.secured_routers:
+            if(validate_restaurant_token(request.headers.get('token'))):
+                return call_next(request)
+            else:
+                abort(401)
+                return jsonify({"message": "invalid token"})
+
+        else:
+            return call_next(request)
+
+
 secured_routers = ["/api/client",]
+restaurant_routes = ["/api/restaurant"]
 
 # configuration
 
@@ -35,6 +53,7 @@ app.testing = True
 
 app.wsgi_app = MiddlewareManager(app)
 app.wsgi_app.add_middleware(SecureRoutersMiddleware, secured_routers=secured_routers)
+app.wsgi_app.add_middleware(RestaurantSecureRoutersMiddleware, secured_routers=restaurant_routes)
 
 # enable CORS
 CORS(app, resources={ r'/*': { 'origins': '*' } })
